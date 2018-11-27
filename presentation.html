@@ -2,9 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="keywords" content="remark,remarkjs,markdown,slideshow,presentation" />
-    <meta name="description" content="A simple, in-browser, markdown-driven slideshow tool." />
-    <title>Remark</title>
+    <title>Bao</title>
     <style>
       @import url(https://fonts.googleapis.com/css?family=Droid+Serif);
       @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
@@ -24,6 +22,7 @@
       .footnote {
         position: absolute;
         bottom: 3em;
+        padding-right: 4em;
       }
       li p { line-height: 1.25em; }
       .red { color: #fa0000; }
@@ -124,30 +123,31 @@ name: inverse
 layout: true
 class: center, middle, inverse
 ---
-#remark
-[ri-mahrk]
-.footnote[Go directly to [project site](https://github.com/gnab/remark)]
+# Bao
+[rhymes with "bough"]
+## a general-purpose cryptographic tree hash
 ---
-## What is it and why should I be using it?
+## What is a hash function?
 ---
 layout: false
 .left-column[
-  ## What is it?
+  ## Hash functions
 ]
 .right-column[
-  A simple, in-browser, Markdown-driven slideshow tool targeted at people who know their way around HTML and CSS, featuring:
+  Turn a big file into a small.red[*] number.
 
-- Markdown formatting, with smart extensions
+```
+$ md5sum my_big_movie.mp4
+78035db461c9ebff34c6da825eb314e2  my_big_movie.mp4
 
-- Presenter mode, with cloned slideshow view
+$ sha1sum my_big_movie.mp4
+592e98dc68ddd0fca198064a192aaf808cfea6d6  my_big_movie.mp4
 
-- Syntax highlighting, supporting a range of languages
+$ sha512sum my_big_movie.mp4
+fe6a94f7c46d6e007d87fbbe7ba3bdff81004b5774edf4d076cda8cab2b764717c514eac1c64f0a889bc939f941a17f6ff6930a2152f8511f5d60690051c1fe1  barney1.mkv
+```
 
-- Slide scaling, thus similar appearance on all devices / resolutions .red[*]
-
-- Touch support for smart phones and pads, i.e. swipe to navigate slides
-
-.footnote[.red[*] At least browsers try their best]
+.footnote[.red[*] Well, small by a computer's standards. 64 or 128 digits is actually a pretty big number. ]
 ]
 ---
 .left-column[
