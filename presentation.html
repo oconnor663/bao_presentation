@@ -150,8 +150,8 @@ Version 1.0 is a couple months away, and hashes will change before then.
 
 ## Cryptography is hard.
 
-I am not a real cryptographer, but real cryptographers are helping. Big thanks
-to Zooko Wilcox-O'Hearn and Samuel Neves.
+I'm not a cryptographer, but real cryptographers are helping. Big thanks to
+Zooko Wilcox-O'Hearn and Samuel Neves.
 ]
 ---
 template: inverse
@@ -230,14 +230,13 @@ template: inverse
 .right-column[
 .image-100[![tree hash](assets/tree_hash.png)]
 
-#### Downsides
+- downsides
+    - some overhead (but not much!)
+- upsides
+    - parallelism (breaking speed records!)
+    - streaming
 
-- some overhead (but not much!)
-
-#### Upsides
-
-- parallelism (breaking speed records!)
-- streaming
+.footnote[.red[*] Image source: https://en.wikipedia.org/wiki/Merkle_tree]
 ]
 ---
 .left-column[
@@ -300,6 +299,174 @@ recipient uses to verify it.
 template: inverse
 
 ## Barney the Demosaur
+---
+template: inverse
+
+## Parallelism in Rust
+---
+.left-column[
+  ## Rayon
+]
+.right-column[
+https://github.com/rayon-rs/rayon
+
+<u>Data</u> parallelism made easy.
+
+```rust
+fn hash_recurse_rayon(
+    input: &[u8],
+    finalization: Finalization,
+) -> Hash {
+
+    // The chunk case. Just hash the chunk.
+    if input.len() <= CHUNK_SIZE {
+        return hash_chunk(input, finalization);
+    }
+
+    // The parent case. Divide the input into two parts
+    // and recurse through the left and right subtrees
+    // in parallel.
+    let (left, right) = input.split_at(
+        left_len(input.len() as u64) as usize);
+    let (left_hash, right_hash) = rayon::join(
+        || hash_recurse_rayon(left, NotRoot),
+        || hash_recurse_rayon(right, NotRoot),
+    );
+    parent_hash(&left_hash, &right_hash, finalization)
+}
+```
+]
+---
+.left-column[
+  ## Rayon
+  ## SIMD
+]
+.right-column[
+.image-100[![simd](assets/simd_add.png)]
+
+Functions using these intrinsics need annotations like this:
+
+```rust
+#[target_feature(enable = "avx2")]
+pub unsafe fn compress(
+    h: &mut StateWords,
+    msg: &Block,
+    count: u128,
+    lastblock: u64,
+    lastnode: u64,
+) {
+    ...
+}
+```
+]
+---
+.left-column[
+  ## Rayon
+  ## SIMD
+]
+.right-column[
+.image-100[![simd](assets/simd_add.png)]
+
+And before you call them you need to do checks like this:
+
+```rust
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+{
+    if is_x86_feature_detected!("avx2") {
+        return avx2::compress;
+    } else {
+        return portable::compress;
+    }
+}
+```
+]
+---
+.left-column[
+  ## Rayon
+  ## SIMD
+  ## BLAKE2
+]
+.right-column[
+.image-100[![blake2](assets/blake2_matrix.png)]
+
+Each of the rows can be stored in a single vector.
+
+But it's actually faster to hash 4 (BLAKE2b) or 8 (BLAKE2s) inputs in parallel,
+using 16 vectors.
+
+When AVX-512 comes out, the parallelism will double.
+
+.footnote[.red[*] Image source: https://131002.net/blake/blake.pdf]
+]
+---
+template: inverse
+
+## Cryptographic security
+---
+.left-column[
+  ## Preimage resistance
+]
+.right-column[
+The only way to figure out what input generated a given hash, is to try all the
+possibilities. You can't work backwards.
+]
+---
+.left-column[
+  ## Preimage resistance
+  ## Collision resistance
+]
+.right-column[
+The only way to figure out what input generated a given hash, is to try all the
+possibilities. You can't work backwards.
+
+No two different inputs ever generate the same hash.
+]
+---
+.left-column[
+  ## Preimage resistance
+  ## Collision resistance
+  ## Length extensions
+]
+.right-column[
+The only way to figure out what input generated a given hash, is to try all the
+possibilities. You can't work backwards.
+
+No two different inputs ever generate the same hash.
+
+There's no way to use the hash of one input to help you find the hash of a
+related input.
+]
+---
+.left-column[
+  ## Preimage resistance
+  ## Collision resistance
+  ## Length extensions
+  ## Attacks
+]
+.right-column[
+A collision attack:.red[*]
+.image-100[![SHA256 image](assets/collision.png)]
+
+An extension attack:.red[*]
+.image-100[![SHA256 image](assets/extension.png)]
+]
+---
+.left-column[
+  ## Preimage resistance
+  ## Collision resistance
+  ## Length extensions
+  ## Attacks
+  ## Security proof
+]
+.right-column[
+**Sufficient conditions for sound tree and sequential hashing modes** by Guido
+Bertoni, Joan Daemen, Michaël Peeters, and Gilles Van Assche (the Keccak/SHA3
+team)
+
+https://eprint.iacr.org/2009/210.pdf
+
+.footnote[.red[*] Images on the previous slide are from the paper above.]
+]
 ---
 name: last-page
 template: inverse
