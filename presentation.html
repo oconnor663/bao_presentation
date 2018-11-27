@@ -130,6 +130,8 @@ class: center, middle, inverse
 
 ## a general-purpose cryptographic tree hash
 
+and perhaps the fastest hash function in the world
+
 https://github.com/oconnor663/bao
 ---
 layout: false
@@ -140,7 +142,7 @@ layout: false
 ## "Fastest" is tricky.
 
 Speed depends on your hardware and the size of your input. There is no "fastest
-hash in the world" on all hardware and for all inputs.
+hash in the world" on all platforms or for all inputs.
 
 ## Bao isn't stable yet.
 
@@ -152,6 +154,8 @@ I am not a real cryptographer, but real cryptographers are helping. Big thanks
 to Zooko Wilcox-O'Hearn and Samuel Neves.
 ]
 ---
+template: inverse
+
 ## What is a hash function?
 ---
 layout: false
@@ -185,7 +189,7 @@ $ sha512sum another_movie.mp4
 907882e892864714ef70b3551bba868882657a3abd23bf0cc2396e45210cae9e0d08e071dd0b37badae3fffb4683ecde0814a79719612704829836c65986cbcb  another_movie.mp4
 ```
 
-.footnote[.red[*] Well, small by a computer's standards. 64 or 128 digits is actually a pretty big number.]
+.footnote[.red[*] Well, small by a computer's standards. As numbers go, 64 or 128 digits is pretty big.]
 ]
 ---
 .left-column[
@@ -215,6 +219,87 @@ compression is an input to the next one.
 
 .footnote[.red[*] Image source: https://medium.com/@pkmar437/blockchain-for-layman-part-2-a8984fda0acc]
 ]
+---
+template: inverse
+
+## What is a tree hash?
+---
+.left-column[
+  ## Tree hashes
+]
+.right-column[
+.image-100[![tree hash](assets/tree_hash.png)]
+
+#### Downsides
+
+- some overhead (but not much!)
+
+#### Upsides
+
+- parallelism (breaking speed records!)
+- streaming
+]
+---
+.left-column[
+  ## Tree hashes
+  ## Streaming
+]
+.right-column[
+If we store the data blocks and all of the intermediate hashes together in an
+encoded file, we can stream the data back out and verify it all as we go:
+
+```bash
+# Take a look at the hash of a movie file.
+$ bao hash my_movie.mp4
+51362b96d8d7f4d4ef4ff02251ccc1b03ef2989f0efbe9a7b05199f198d51727
+
+# Encode the movie file into the Bao encoded format.
+$ bao encode my_movie.mp4 my_movie.mp4.bao
+$ ls -lh my_movie.mp4 my_movie.mp4.bao
+-rw-r--r-- 1 jacko jacko 797K Nov 27 15:28 my_movie.mp4
+-rw-r--r-- 1 jacko jacko 809K Nov 27 15:28 my_movie.mp4.bao
+
+# Stream the movie back out of the encoding,
+# while verifying its hash.
+$ hash=`bao hash my_movie.mp4`
+$ bao decode $hash my_movie.mp4.bao | vlc -
+```
+]
+---
+.left-column[
+  ## Tree hashes
+  ## Streaming
+  ## Fancy streaming
+]
+.right-column[
+```bash
+$ bao --help
+Usage: bao hash [<input>] [<inputs>... | --encoded
+           | --outboard=<file>]
+
+       bao encode <input> (<output> | --outboard=<file>)
+
+       bao decode <hash> [<input>] [<output>]
+           [--outboard=<file>] [--start=<offset>]
+           [--count=<count>]
+
+       bao slice <start> <count> [<input>] [<output>]
+           [--outboard=<file>]
+
+       bao decode-slice <hash> <start> <count> [<input>]
+           [<output>]
+
+       bao (--help | --version)
+```
+
+`--start` lets you seek into the middle of an encoding. "Slicing" lets you
+extract parts from the middle of a file, without changing the hash that the
+recipient uses to verify it.
+]
+---
+template: inverse
+
+## Barney the Demosaur
 ---
 name: last-page
 template: inverse
