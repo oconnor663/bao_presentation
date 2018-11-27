@@ -172,11 +172,11 @@ $ md5sum my_big_movie.mp4
 $ sha1sum my_big_movie.mp4
 592e98dc68ddd0fca198064a192aaf808cfea6d6  my_big_movie.mp4
 
-$ sha512sum my_big_movie.mp4
-fe6a94f7c46d6e007d87fbbe7ba3bdff81004b5774edf4d076cda8cab2b764717c514eac1c64f0a889bc939f941a17f6ff6930a2152f8511f5d60690051c1fe1  my_big_movie.mp4
+$ sha256sum my_big_movie.mp4
+93984073d78d2e18be8519601c051ade3796b987faa67286c3a1d5e323286892  my_big_movie.mp4
 ```
 
-A different files results in a completely different number.
+Different files have completely different hashes.
 
 ```bash
 $ md5sum another_movie.mp4
@@ -185,11 +185,11 @@ a099223e1246644e685f8ea3365abc2c  another_movie.mp4
 $ sha1sum another_movie.mp4
 4de5f92070b35e8c90937c38ba1d33dcadd084a8  another_movie.mp4
 
-$ sha512sum another_movie.mp4
-907882e892864714ef70b3551bba868882657a3abd23bf0cc2396e45210cae9e0d08e071dd0b37badae3fffb4683ecde0814a79719612704829836c65986cbcb  another_movie.mp4
+$ sha256sum another_movie.mp4
+50c393f158c3de2db92fa9661bfb00eda5b67c3a777c88524ed3417509631625  another_movie.mp4
 ```
 
-.footnote[.red[*] Well, small by a computer's standards. As numbers go, 64 or 128 digits is pretty big.]
+.footnote[.red[*] Well, small by a computer's standards. But 64 digits is a pretty big number.]
 ]
 ---
 .left-column[
@@ -374,10 +374,9 @@ And before you call them you need to do checks like this:
 {
     if is_x86_feature_detected!("avx2") {
         return avx2::compress;
-    } else {
-        return portable::compress;
     }
 }
+return portable::compress;
 ```
 ]
 ---
@@ -465,17 +464,34 @@ team)
 
 https://eprint.iacr.org/2009/210.pdf
 
+Three conditions for security:
+
+- **Tree decodability:** You can tell leaves and parents apart.
+- **Message completeness:** You can reconstruct the original input from the tree.
+- **Final-node separability:** You can tell the root apart from the rest.
+
 .footnote[.red[*] Images on the previous slide are from the paper above.]
 ]
 ---
+template: inverse
+
+## Monster hardware demo!
+---
 name: last-page
 template: inverse
+
+## Future directions
+
+BLAKE2b vs BLAKE2s
+
+Alternative tree structures
 
 ## Thanks for listening!
 
 ## Questions?
 
-Project URL: https://github.com/oconnor663/bao
+## https://github.com/oconnor663/bao
+
     </textarea>
     <script src="remark/remark.min.js"></script>
     <script>
