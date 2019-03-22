@@ -118,6 +118,11 @@
       .image-100 img {
         width: 100%;
       }
+      .image-center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
     </style>
   </head>
   <body>
@@ -307,6 +312,28 @@ template: inverse
 ## Parallelism in Rust
 ---
 .left-column[
+  ## Rust
+]
+.right-column[
+.image-center[![Rust](assets/rust.svg)]
+
+A systems programming language that runs blazingly fast, prevents segfaults,
+and guarantees thread safety.
+
+Featuring
+- zero-cost abstractions
+- move semantics
+- guaranteed memory safety
+- threads without data races
+- trait-based generics
+- pattern matching
+- type inference
+- minimal runtime
+- efficient C bindings
+]
+---
+.left-column[
+  ## Rust
   ## Rayon
 ]
 .right-column[
@@ -340,6 +367,7 @@ fn hash_recurse_rayon(
 ]
 ---
 .left-column[
+  ## Rust
   ## Rayon
   ## SIMD
 ]
@@ -363,6 +391,7 @@ pub unsafe fn compress(
 ]
 ---
 .left-column[
+  ## Rust
   ## Rayon
   ## SIMD
 ]
@@ -383,6 +412,7 @@ return portable::compress;
 ]
 ---
 .left-column[
+  ## Rust
   ## Rayon
   ## SIMD
   ## BLAKE2
